@@ -1,6 +1,7 @@
 param (
   [string]$vcpkg_root = $(throw "-vcpkg_root=<path to vcpkg> is required"),
-  [string]$arch = "",
+  [ValidateSet('x86', 'x64', 'arm', 'arm64')]
+  [string[]]$arch = @( "x86", "x64", "arm", "arm64" ),
   [string]$mode = "all",
   [string]$compress = "7z",
   [switch]$release_only = $false,
@@ -11,9 +12,8 @@ $ErrorActionPreference = "Stop"
 $vcpkg_root = Resolve-Path $vcpkg_root
 
 $vcpkg_cmake="${vcpkg_root}\scripts\buildsystems\vcpkg.cmake"
-$arch_list = @( "x86", "x64", "ARM", "ARM64" )
-if ($arch) {
-  $arch_list = @(, $arch)
+$arch_list = foreach ($x in $arch) {
+  $l.ToLower()
 }
 $config_list = @( "Debug", "Release" )
 if ($release_only -or $nupkg) {
